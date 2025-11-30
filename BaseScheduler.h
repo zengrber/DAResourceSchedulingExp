@@ -2,6 +2,7 @@
 #define BASE_SCHEDULER_H
 
 #include "Scheduler.h"
+#include "Simulation.h"
 
 // 一个简单的基线调度器：
 // 对当前批次中所有处于 Waiting 状态的 job，
@@ -13,7 +14,8 @@ public:
 
     void runBatch(std::vector<Job*>& jobs,
                   std::vector<Server*>& servers,
-                  int currentTime) override;
+                  int currentTime,
+                  Simulation *sim) override;
 };
 
 #endif 

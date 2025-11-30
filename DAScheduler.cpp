@@ -1,6 +1,7 @@
 #include "DAScheduler.h"
 #include "Job.h"
 #include "Server.h"
+#include "Simulation.h"
 
 #include <vector>
 #include <algorithm>
@@ -28,7 +29,8 @@ static bool isMatched(const std::vector<std::vector<Job*>>& matches, Job* job) {
 
 void DAScheduler::runBatch(std::vector<Job*>& jobs,
                            std::vector<Server*>& servers,
-                           int currentTime)
+                           int currentTime,
+                           Simulation *sim)
 {
     // 1. 收集当前参与本次 DA 的 job：必须是 Waiting 状态
     std::vector<Job*> active;
@@ -168,6 +170,7 @@ void DAScheduler::runBatch(std::vector<Job*>& jobs,
             if (job->isWaiting()) {
                 if (s->accept(job)) {      // accept 用 trueDemand 检查容量
                     job->markRunning(currentTime);
+                    if (sim) sim->logJobStart(job, s, currentTime);
                 }
             }
         }

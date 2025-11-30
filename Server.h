@@ -1,6 +1,8 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include "Simulation.h"
+
 #include <vector>
 #include <cstddef> // std::size_t
 
@@ -36,7 +38,7 @@ public:
     void clearAssignments();
 
     // 清除当前已经完成的作业
-    void removeFinishedJobs(int currentTime);
+    void removeFinishedJobs(int currentTime, Simulation *sim);
 
 private:
     int id_ = -1;

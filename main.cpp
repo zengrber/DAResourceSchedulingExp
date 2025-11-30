@@ -59,8 +59,7 @@ int main(int argc, char** argv) {
     }
 
     RunConfig rc;
-    double prob = loadConfigFromFile(configPath, rc);
-    if (prob >= 0) {
+    if (!loadConfigFromFile(configPath, rc)) {
         std::cerr << "Using default config values.\n";
     }
 
@@ -74,6 +73,8 @@ int main(int argc, char** argv) {
         baseSeed = rc.gen.seed;
         std::cout << "[INFO] Using configured seed = " << baseSeed << "\n";
     }
+
+    bool enableVisualization = (rc.gen.numJobs <= 50 && rc.numSeeds == 1);
 
     for (int s = 0; s < rc.numSeeds; ++s) {
         unsigned int seed = baseSeed + s;
@@ -113,10 +114,27 @@ int main(int argc, char** argv) {
         DAScheduler   daSched;
         Simulation    sim(rc.timeLimit);
 
-        Metrics mBaseTruth = sim.run(baseSched, jobsBaseTruth, serversBaseTruth, rc.batchSize);
-        Metrics mBaseStrat = sim.run(baseSched, jobsBaseStrat, serversBaseStrat, rc.batchSize);
-        Metrics mDATruth   = sim.run(daSched,   jobsDATruth,   serversDATruth,   rc.batchSize);
-        Metrics mDAStrat   = sim.run(daSched,   jobsDAStrat,   serversDAStrat,   rc.batchSize);
+        // ---- Base Truthful ----
+        sim.clearRunRecords();
+        Metrics mBaseTruth = sim.run(baseSched, jobsBaseTruth, serversBaseTruth, rc.batchSize, &sim);
+        if(enableVisualization) sim.dumpRunRecordsToCSV("results/schedule_base_truth.csv", serversBaseTruth);
+
+        // ---- Base Strategic ----
+        sim.clearRunRecords();
+        Metrics mBaseStrat = sim.run(baseSched, jobsBaseStrat, serversBaseStrat, rc.batchSize, &sim);
+        if(enableVisualization) sim.dumpRunRecordsToCSV("results/schedule_base_strat.csv", serversBaseStrat);
+
+        // ---- DA Truthful ----
+        sim.clearRunRecords();
+        Metrics mDATruth = sim.run(daSched, jobsDATruth, serversDATruth, rc.batchSize, &sim);
+        if(enableVisualization) sim.dumpRunRecordsToCSV("results/schedule_da_truth.csv", serversDATruth);
+
+        // ---- DA Strategic ----
+        sim.clearRunRecords();
+        Metrics mDAStrat = sim.run(daSched, jobsDAStrat, serversDAStrat, rc.batchSize, &sim);
+        if(enableVisualization) sim.dumpRunRecordsToCSV("results/schedule_da_strat.csv", serversDAStrat);
+
+        sim.clearRunRecords();
 
         std::cout << "=== Base Truthful ===\n";
         mBaseTruth.print();
@@ -138,8 +156,15 @@ int main(int argc, char** argv) {
                         serversDATruth,
                         serversDAStrat);
 
-        std::string configName = configPath;
-        std::string writeFileName = "results/results_" + std::to_string(prob) + ".csv";
+        std::string configName;
+        std::string writeFileName;
+        if(enableVisualization) { //small case visulization
+            configName = configPath;
+            writeFileName = "results/results_small_case.csv";
+        } else {
+            configName = configPath;
+            writeFileName = "results/results_" + std::to_string(rc.gen.misreportProb) + ".csv";
+        }   
         ResultWriter::writeCSV(writeFileName, configName, "base_truth", seed, mBaseTruth);
         ResultWriter::writeCSV(writeFileName, configName, "base_strat", seed, mBaseStrat);
         ResultWriter::writeCSV(writeFileName, configName, "da_truth",   seed, mDATruth);

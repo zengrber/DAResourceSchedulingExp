@@ -1,5 +1,6 @@
 #include "Server.h"
 #include "Job.h"
+#include "Simulation.h"
 
 bool Server::canAccept(const Job* job) const {
     return job && (job->reportedDemand() <= freeCapacity());
@@ -28,7 +29,7 @@ void Server::clearAssignments() {
     usedCapacity_ = 0;
 }
 
-void Server::removeFinishedJobs(int currentTime) {
+void Server::removeFinishedJobs(int currentTime, Simulation *sim) {
     std::vector<Job*> stillRunning;
     stillRunning.reserve(assignedJobs_.size());
 
@@ -41,6 +42,7 @@ void Server::removeFinishedJobs(int currentTime) {
             int elapsed = currentTime - job->startTime();
             if (elapsed >= job->duration()) {
                 job->markFinished(currentTime);
+                if (sim) sim->logJobFinish(job, currentTime);
                 freed += job->trueDemand(); 
                 continue; 
             }

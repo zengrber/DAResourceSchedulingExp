@@ -1,6 +1,7 @@
 #include "BaseScheduler.h"
 #include "Job.h"
 #include "Server.h"
+#include "Simulation.h"
 
 #include <climits>   // INT_MAX
 #include <cstddef>   // std::size_t
@@ -13,7 +14,8 @@
 //   - 如果找不到，job 保持 Waiting（之后批次再尝试）。
 void BaseScheduler::runBatch(std::vector<Job*>& jobs,
                              std::vector<Server*>& servers,
-                             int currentTime)
+                             int currentTime,
+                             Simulation* sim)
 {
     // 对每个 job 尝试分配一次
     for (Job* job : jobs) {
@@ -44,7 +46,7 @@ void BaseScheduler::runBatch(std::vector<Job*>& jobs,
             // Server::accept 里会更新 usedCapacity_ 和 assignedJobs_
             if (bestServer->accept(job)) {
                 job->markRunning(currentTime);
-                // 后续由 Simulation 按 duration 减去时间并在完成时 markFinished()
+                if (sim) sim->logJobStart(job, bestServer, currentTime);
             }
         }
         // 否则 job 继续保持 Waiting，在之后的批次再尝试

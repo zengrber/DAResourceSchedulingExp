@@ -12,7 +12,7 @@ durationMax=5
 
 maxArrivalTime=120
 
-misreportProb=0
+misreportProb=0.9
 misreportAlpha=0.5
 
 seed=-1

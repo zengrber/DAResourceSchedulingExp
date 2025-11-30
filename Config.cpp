@@ -23,11 +23,11 @@ inline std::string trim(const std::string& s) {
 
 } // anonymous namespace
 
-double loadConfigFromFile(const std::string& path, RunConfig& cfg) {
+bool loadConfigFromFile(const std::string& path, RunConfig& cfg) {
     std::ifstream fin(path);
     if (!fin) {
         std::cerr << "Failed to open config file: " << path << "\n";
-        return -1.0;
+        return false;
     }
 
     std::string line;
@@ -100,5 +100,5 @@ double loadConfigFromFile(const std::string& path, RunConfig& cfg) {
         }
     }
 
-    return cfg.gen.misreportProb;
+    return true;
 }

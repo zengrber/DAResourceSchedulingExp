@@ -13,6 +13,6 @@ struct RunConfig {
 };
 
 // 从文本文件读取配置，成功返回 true
-double loadConfigFromFile(const std::string& path, RunConfig& cfg);
+bool loadConfigFromFile(const std::string& path, RunConfig& cfg);
 
 #endif // CONFIG_H

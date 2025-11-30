@@ -1,6 +1,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
+#include "Simulation.h"
+
 #include <vector>
 
 class Job;
@@ -19,7 +21,8 @@ public:
     virtual void runBatch(
         std::vector<Job*>& jobs,
         std::vector<Server*>& servers,
-        int currentTime
+        int currentTime,
+        Simulation *sim
     ) = 0;
 };
 

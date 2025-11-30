@@ -2,6 +2,7 @@
 #define DA_SCHEDULER_H
 
 #include "Scheduler.h"
+#include "Simulation.h"
 
 class DAScheduler : public Scheduler {
 public:
@@ -10,7 +11,8 @@ public:
 
     void runBatch(std::vector<Job*>& jobs,
                   std::vector<Server*>& servers,
-                  int currentTime) override;
+                  int currentTime,
+                  Simulation *sim) override;
 };
 
 #endif // DA_SCHEDULER_H
