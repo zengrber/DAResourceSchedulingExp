@@ -1,7 +1,7 @@
 # DAResourceSchedulingExp
 
 To run:
-run `build.dat`
+run `build.bat`
 then `build\sim.exe`
 
 Settings:
