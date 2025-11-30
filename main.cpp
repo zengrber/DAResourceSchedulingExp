@@ -13,6 +13,35 @@
 #include "Server.h"
 #include "ResultWriter.h"
 
+template <typename T>
+void freePtrVector(std::vector<T*>& vec) {
+    for (T* p : vec) {
+        delete p;
+    }
+    vec.clear();
+}
+
+void freeAllForOneRun(std::vector<Job*>& trueJobs,
+                      std::vector<Job*>& jobsBaseTruth,
+                      std::vector<Job*>& jobsBaseStrat,
+                      std::vector<Job*>& jobsDATruth,
+                      std::vector<Job*>& jobsDAStrat,
+                      std::vector<Server*>& serversBaseTruth,
+                      std::vector<Server*>& serversBaseStrat,
+                      std::vector<Server*>& serversDATruth,
+                      std::vector<Server*>& serversDAStrat) {
+    freePtrVector(trueJobs);
+    freePtrVector(jobsBaseTruth);
+    freePtrVector(jobsBaseStrat);
+    freePtrVector(jobsDATruth);
+    freePtrVector(jobsDAStrat);
+
+    freePtrVector(serversBaseTruth);
+    freePtrVector(serversBaseStrat);
+    freePtrVector(serversDATruth);
+    freePtrVector(serversDAStrat);
+}
+
 unsigned int generateRandomSeed() {
     unsigned int timePart = 
         static_cast<unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
@@ -99,8 +128,15 @@ int main(int argc, char** argv) {
         mDAStrat.print();
         std::cout << "\n";
 
-        // TODO：这里别忘了 delete 所有 new 出来的 Job / Server
-        // 你现在先不管，等结构稳定了再加一个统一的 free 函数也行
+        freeAllForOneRun(trueJobs,
+                        jobsBaseTruth,
+                        jobsBaseStrat,
+                        jobsDATruth,
+                        jobsDAStrat,
+                        serversBaseTruth,
+                        serversBaseStrat,
+                        serversDATruth,
+                        serversDAStrat);
 
         std::string configName = configPath;
         std::string writeFileName = "results/results_" + std::to_string(prob) + ".csv";
