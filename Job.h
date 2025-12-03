@@ -7,7 +7,8 @@
 enum class JobState {
     Waiting,
     Running,
-    Finished
+    Finished,
+    Failed
 };
 
 class Job {
@@ -61,9 +62,15 @@ public:
         finishTime_ = currentTime;
     }
 
+    void markFailed(int currentTime) {
+        state_ = JobState::Failed;
+        finishTime_ = currentTime;
+    } 
+
     bool isFinished() const { return state_ == JobState::Finished; }
     bool isWaiting() const { return state_ == JobState::Waiting; }
     bool isRunning() const { return state_ == JobState::Running; }
+    bool isFailed() const { return state_ == JobState::Failed; }
 
 
     // --- DA-related helpers ---

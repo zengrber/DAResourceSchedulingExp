@@ -67,6 +67,7 @@ void DAScheduler::runBatch(std::vector<Job*>& jobs,
 
             int sid = job->nextPreferredServer();
             if (sid < 0) {
+                job->markFailed(currentTime);
                 continue; // 没有剩余偏好
             }
 
@@ -122,7 +123,7 @@ void DAScheduler::runBatch(std::vector<Job*>& jobs,
             int remainingCap = s->freeCapacity(); // 注意：freeCapacity 已经考虑了旧 Running job
 
             for (Job* job : candidates) {
-                int d = job->trueDemand(); // 真实需求作为容量约束
+                int d = job->reportedDemand(); // 真实需求作为容量约束
                 if (d <= remainingCap) {
                     newMatches.push_back(job);
                     remainingCap -= d;
@@ -171,6 +172,8 @@ void DAScheduler::runBatch(std::vector<Job*>& jobs,
                 if (s->accept(job)) {      // accept 用 trueDemand 检查容量
                     job->markRunning(currentTime);
                     if (sim) sim->logJobStart(job, s, currentTime);
+                } else {
+                    job->markFailed(currentTime);
                 }
             }
         }

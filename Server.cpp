@@ -3,7 +3,7 @@
 #include "Simulation.h"
 
 bool Server::canAccept(const Job* job) const {
-    return job && (job->reportedDemand() <= freeCapacity());
+    return job && (job->trueDemand() <= freeCapacity());
 }
 
 bool Server::accept(Job* job) {
@@ -17,7 +17,7 @@ void Server::remove(Job* job) {
     if (!job) return;
     for (std::size_t i = 0; i < assignedJobs_.size(); ++i) {
         if (assignedJobs_[i] == job) {
-            usedCapacity_ -= job->reportedDemand();
+            usedCapacity_ -= job->trueDemand();
             assignedJobs_.erase(assignedJobs_.begin() + i);
             break;
         }

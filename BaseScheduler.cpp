@@ -22,7 +22,7 @@ void BaseScheduler::runBatch(std::vector<Job*>& jobs,
         if (!job) continue;
         if (!job->isWaiting()) continue;  // 只管等待中的任务
 
-        int demand = job->trueDemand();
+        int demand = job->reportedDemand();
         if (demand <= 0) {
             // 理论上不应该发生，但防御一下
             continue;
