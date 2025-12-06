@@ -2,6 +2,7 @@
 #include <vector>
 #include <random>
 #include <chrono>
+#include <iomanip>
 
 #include "Config.h"
 #include "DataGenerator.h"
@@ -19,6 +20,12 @@ void freePtrVector(std::vector<T*>& vec) {
         delete p;
     }
     vec.clear();
+}
+
+std::string doubleToString(double value, int precision) {
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(precision) << value;
+    return oss.str();
 }
 
 void freeAllForOneRun(std::vector<Job*>& trueJobs,
@@ -163,7 +170,11 @@ int main(int argc, char** argv) {
             writeFileName = "results/results_small_case.csv";
         } else {
             configName = configPath;
-            writeFileName = "results/results_" + std::to_string(rc.gen.misreportProb) + ".csv";
+            writeFileName = "results/results_" + 
+                            doubleToString(rc.gen.misreportProb, 2) +
+                            "_" +
+                            doubleToString(rc.gen.misreportAlpha, 2) +
+                            ".csv";
         }   
         ResultWriter::writeCSV(writeFileName, configName, "base_truth", seed, mBaseTruth);
         ResultWriter::writeCSV(writeFileName, configName, "base_strat", seed, mBaseStrat);
