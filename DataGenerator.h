@@ -7,45 +7,43 @@
 class Job;
 class Server;
 
-// 用来统一控制数据分布的配置
 struct GeneratorConfig {
     int numJobs          = 100;
     int numServers       = 5;
 
-    int serverCapMin     = 10;   // 单个 server 最小容量
-    int serverCapMax     = 20;   // 单个 server 最大容量
+    int serverCapMin     = 10;   // min server capacity
+    int serverCapMax     = 20;   // max server capacity
 
-    int demandMin        = 1;    // job 真实需求下界
-    int demandMax        = 10;   // job 真实需求上界
+    int demandMin        = 1;    // min true demand
+    int demandMax        = 10;   // max true demand
 
-    int durationMin      = 1;    // 运行时间下界
-    int durationMax      = 5;    // 运行时间上界
+    int durationMin      = 1;    // min durantion
+    int durationMax      = 5;    // max duration
 
-    int maxArrivalTime   = 20;   // job最大到达时间
+    int maxArrivalTime   = 20;   // max arrival time
 
-    double misreportProb = 0.0;  // 谎报率 p
-    double misreportAlpha= 0.0;  // 谎报幅度 α（0.5 表示 ±50%）
+    double misreportProb = 0.0;  // lie rate p
+    double misreportAlpha= 0.0;  // lie degree α（0.5 stands for ±50%）
 
-    unsigned int seed    = 42;   // 随机种子（保证可复现）
+    unsigned int seed    = 42;   // random seed
 };
 
 class DataGenerator {
 public:
     explicit DataGenerator(const GeneratorConfig& cfg);
 
-    // 生成 ground-truth jobs（只有 trueDemand/arrival/duration + 偏好）
-    // 返回的是“基准版本”，后面基于它生成 truthful / strategic 拷贝
+    // generate ground-truth jobs（trueDemand/arrival/duration）
     void generateTrueJobs(std::vector<Job*>& outJobs) const;
 
-    // 基于 trueJobs 生成一个“完全诚实上报”的版本
+    // generate a full truly reported version base on GT
     void makeTruthfulCopy(const std::vector<Job*>& trueJobs,
                           std::vector<Job*>& outJobs) const;
 
-    // 基于 trueJobs 生成一个“部分任务谎报”的版本
+    // generate a strategically reported version base on GT
     void makeStrategicCopy(const std::vector<Job*>& trueJobs,
                            std::vector<Job*>& outJobs) const;
 
-    // 生成服务器列表
+    // generate server lists
     void generateServers(std::vector<Server*>& outServers) const;
 
 private:

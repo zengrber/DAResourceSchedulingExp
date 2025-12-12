@@ -12,12 +12,12 @@ class Scheduler {
 public:
     virtual ~Scheduler() = default;
 
-    // 在一个批次上做调度决策：
-    //  - jobs: 当前参与调度的 job 指针（通常是 waiting 且已到达的）
-    //  - servers: 所有 server
-    //  - currentTime: 当前时间，用于标记 job 开始/结束等
+    // Schedule a batch：
+    //  - jobs: waiting job pointers
+    //  - servers: all servers
+    //  - currentTime: current time, use to mark job's state
     //
-    // 具体的调度算法（baseline / DA）在子类里实现。
+    // Specific schedulers are implemented in other child classes
     virtual void runBatch(
         std::vector<Job*>& jobs,
         std::vector<Server*>& servers,

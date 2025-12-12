@@ -4,9 +4,12 @@
 #include "Scheduler.h"
 #include "Simulation.h"
 
-// 一个简单的基线调度器：
-// 对当前批次中所有处于 Waiting 状态的 job，
-// 用 best-fit（剩余容量最小但仍能容纳）的策略选择 server。
+// Simple Best-Fit on reportedDemand
+// - For each Waiting job：
+//   - Find server that satisfies freeCapacity >= reportedDemand and minimize 
+//     (freeCapacity - reportedDemand) 
+//   - If found, assign job to that server and mark job as 'Running'
+//   - Otherwise mark the job 'failed'
 class BaseScheduler : public Scheduler {
 public:
     BaseScheduler() = default;

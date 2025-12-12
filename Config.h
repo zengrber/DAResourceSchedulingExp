@@ -12,7 +12,6 @@ struct RunConfig {
     int numSeeds   = 1; 
 };
 
-// 从文本文件读取配置，成功返回 true
 bool loadConfigFromFile(const std::string& path, RunConfig& cfg);
 
 #endif // CONFIG_H

@@ -25,19 +25,19 @@ public:
 
     const std::vector<Job*>& assignedJobs() const { return assignedJobs_; }
 
-    // 尝试接收一个 job（基于 reported demand）
+    // try accept a job（基于 reported demand）
     bool canAccept(const Job* job) const;
 
-    // 实际接受：修改 usedCapacity_，加入 assignedJobs_
+    // accept a job
     bool accept(Job* job);
 
-    // 从当前分配中移除一个 job（DA 调整时会用到）
+    // remove a job
     void remove(Job* job);
 
-    // 清空当前批次临时匹配（开始新一轮 DA 或新批次）
+    // remove temporary matches
     void clearAssignments();
 
-    // 清除当前已经完成的作业
+    // remove finished jobs
     void removeFinishedJobs(int currentTime, Simulation *sim);
 
 private:
@@ -46,7 +46,6 @@ private:
     int capacity_ = 0;
     int usedCapacity_ = 0;
 
-    // 在调度器里会只存指针，不拥有 Job 的生命周期
     std::vector<Job*> assignedJobs_;
 };
 

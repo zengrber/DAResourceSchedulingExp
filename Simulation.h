@@ -17,10 +17,10 @@ struct JobRunRecord {
     int demand;    
 };
 
-// 简单版 Simulation：
-// - 在 t=0 调用一次 scheduler.runBatch 分配所有已到达的任务；
-// - 然后时间从 0 跑到 timeLimit，期间任务按 duration 完成并释放资源；
-// - 最后计算基本指标（吞吐量、等待时间等）。
+// Simulation：
+// - Apply scheduler.runBatch when t=0；
+// - From t=0 to timeLimit，jobs are finished and release capacity according to duration；
+// - Finally compute metrics
 class Simulation {
 public:
     Simulation(int timeLimit)

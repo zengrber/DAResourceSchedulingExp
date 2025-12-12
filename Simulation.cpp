@@ -8,7 +8,7 @@
 #include <string>
 #include <fstream>
 
-// 在当前时间点检查：哪些 running job 已经跑完 duration
+// check each job if they are finished
 void Simulation::updateFinishedJobs(std::vector<Server*>& servers, 
                                     int currentTime,
                                     Simulation *sim)
@@ -55,7 +55,7 @@ Metrics Simulation::run(Scheduler& scheduler,
             scheduler.runBatch(waiting, servers, currentTime, this);
         }
 
-        // 统计本时间步的资源使用
+        // record capacity used
         double usedCap = 0.0;
         for (Server* s : servers) {
             if (s) usedCap += s->usedCapacity();
@@ -67,7 +67,7 @@ Metrics Simulation::run(Scheduler& scheduler,
         ++timeSteps;
     }
 
-    // 统计指标
+    // stat metrics
     int finished = 0;
     double sumCompletion = 0.0;
     double sumWaiting = 0.0;
@@ -110,7 +110,7 @@ void Simulation::logJobStart(Job* job, Server* server, int currentTime) {
 void Simulation::logJobFinish(Job* job, int currentTime) {
     if (!job) return;
     int jid = job->id();
-    // 从后往前找最后一个还没填 endTime 的记录
+    // find last record which hasn't record end time
     for (int i = static_cast<int>(runRecords_.size()) - 1; i >= 0; --i) {
         if (runRecords_[i].jobId == jid && runRecords_[i].endTime < 0) {
             runRecords_[i].endTime = currentTime;
@@ -124,7 +124,7 @@ void Simulation::dumpRunRecordsToCSV(const std::string& filename, std::vector<Se
     if (!out) return;
     out << "jobId,serverId,startTime,endTime,demand,serverCap\n";
     for (const auto& r : runRecords_) {
-        if (r.endTime < 0) continue; // 只导出完整跑完的
+        if (r.endTime < 0) continue; 
         int cap = servers[r.serverId]->capacity();
         out << r.jobId    << ","
             << r.serverId << ","

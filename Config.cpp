@@ -8,7 +8,6 @@
 
 namespace {
 
-// 去掉前后空白
 inline std::string trim(const std::string& s) {
     std::size_t start = 0;
     while (start < s.size() && std::isspace(static_cast<unsigned char>(s[start]))) {
@@ -21,7 +20,7 @@ inline std::string trim(const std::string& s) {
     return s.substr(start, end - start);
 }
 
-} // anonymous namespace
+} 
 
 bool loadConfigFromFile(const std::string& path, RunConfig& cfg) {
     std::ifstream fin(path);
@@ -60,7 +59,7 @@ bool loadConfigFromFile(const std::string& path, RunConfig& cfg) {
             }
         };
 
-        // GeneratorConfig 部分
+        // GeneratorConfig
         if (key == "numJobs") {
             cfg.gen.numJobs = toInt(value, cfg.gen.numJobs);
         } else if (key == "numServers") {
@@ -88,7 +87,7 @@ bool loadConfigFromFile(const std::string& path, RunConfig& cfg) {
                 toInt(value, static_cast<int>(cfg.gen.seed))
             );
         }
-        // Simulation 部分
+        // Simulation
         else if (key == "timeLimit") {
             cfg.timeLimit = toInt(value, cfg.timeLimit);
         } else if (key == "batchSize") {

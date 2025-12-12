@@ -1,12 +1,11 @@
 @echo off
 REM ============================
 REM  Simple build script (Windows)
-REM  使用 g++ 编译到 build\sim.exe
+REM  use g++ to make build\sim.exe
 REM ============================
 
 setlocal enabledelayedexpansion
 
-REM 如果你用的是 MSYS2/MinGW，请确认 g++.exe 在 PATH 里
 set CXX=g++
 set CXXFLAGS=-std=c++17 -O2 -Wall -Wextra
 

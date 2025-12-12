@@ -8,7 +8,7 @@ struct Metrics {
     double avgCompletionTime = 0.0; // finishTime - arrivalTime
     double avgWaitingTime    = 0.0; // startTime  - arrivalTime
 
-    double avgUtilization    = 0.0; // 非严格定义，简单近似
+    double avgUtilization    = 0.0; 
 
     void print() const;
 };

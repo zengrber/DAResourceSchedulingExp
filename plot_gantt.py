@@ -16,7 +16,6 @@ def plot_schedule(csv_path, title, out_png=None):
     y_ticks = []
     y_labels = []
 
-    # 高度布局参数
     lane_height = 6
     lane_gap    = 2
     server_gap  = 6
@@ -27,9 +26,8 @@ def plot_schedule(csv_path, title, out_png=None):
         sub = df[df["serverId"] == sid].copy()
         sub.sort_values("startTime", inplace=True)
 
-        # ----- 为该 server 做 lane 排布 -----
-        lanes_end = []      # 每个 lane 当前结束时间
-        plotted_jobs = []   # (lane_id, start, end, jobId)
+        lanes_end = []     
+        plotted_jobs = []   
 
         for _, row in sub.iterrows():
             start = row["startTime"]
@@ -51,11 +49,10 @@ def plot_schedule(csv_path, title, out_png=None):
         num_lanes = max(1, len(lanes_end))
         server_height = num_lanes * (lane_height + lane_gap) - lane_gap
 
-        # y 轴标签放在该 server 中间
+     
         y_ticks.append(current_y + server_height / 2)
         y_labels.append(f"Server {sid}")
 
-        # ----- 画 job 条 -----
         for lane_id, start, end, jid in plotted_jobs:
             lane_y = current_y + lane_id * (lane_height + lane_gap)
             dur = end - start
@@ -86,24 +83,18 @@ def plot_schedule(csv_path, title, out_png=None):
     ax.set_title(title)
     ax.grid(True, axis="x", linestyle="--", alpha=0.4)
 
-    # =============================
-    #  叠加 overall utilization 折线
-    # =============================
-    # 1) 决定时间轴取样点（整数时间刻度）
     t_min = df["startTime"].min()
     t_max = df["endTime"].max()
     times = np.arange(t_min, t_max + 1)
 
-    # 2) 计算每个时刻的总使用量
     used = []
     for t in times:
-        # 当前时刻正在跑的 job： start <= t < end
         running = df[(df["startTime"] <= t) & (df["endTime"] > t)]
         used.append(running["demand"].sum())
 
     used = np.array(used, dtype=float)
 
-    # 3) 计算总 capacity（如果有 serverCap 就用；否则用 used 的最大值当 scale）
+    # calculate total capacity
     if "serverCap" in df.columns:
         caps = df.groupby("serverId")["serverCap"].first()
         total_cap = caps.sum()
@@ -117,7 +108,6 @@ def plot_schedule(csv_path, title, out_png=None):
     ax2.set_ylabel("Total utilization")
     ax2.set_ylim(0, 1.05)
 
-    # 合并两个轴的 legend
     handles1, labels1 = ax.get_legend_handles_labels()
     handles2, labels2 = ax2.get_legend_handles_labels()
     if handles2:
